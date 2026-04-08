@@ -324,33 +324,29 @@ TASKS: Dict[str, Task] = {
 
 def grade(task: Task, actions_taken: List[Dict[str, str]]) -> float:
     """
-    Deterministic grader. Returns score in [0.0, 1.0].
+    Deterministic grader. Returns score STRICTLY in (0.0, 1.0).
+    Never returns exactly 0.0 or 1.0 as per competition requirements.
 
-    Scoring logic:
-      1.0  — correct action_type AND correct target in actions_taken
-      0.6  — correct action_type but wrong target
-      0.3  — only partial/investigative actions (inspect_logs, diagnose, etc.)
-      0.1  — at least one action taken (tried something)
-      0.0  — no actions taken
+    0.95  — correct action_type AND correct target
+    0.75  — correct action_type but wrong target
+    0.40  — only partial / investigative actions
+    0.10  — at least one action taken
+    0.05  — no actions taken (minimum non-zero)
     """
     if not actions_taken:
-        return 0.0
+        return 0.05
 
     action_types = [a.get("action_type", "") for a in actions_taken]
     targets      = [a.get("target", "")      for a in actions_taken]
 
-    # Full credit
     for at, tgt in zip(action_types, targets):
         if at == task.correct_action and tgt == task.correct_target:
-            return 1.0
+            return 0.95
 
-    # Correct action, wrong target
     if task.correct_action in action_types:
-        return 0.6
+        return 0.75
 
-    # Partial / investigative actions
     if any(at in task.partial_actions for at in action_types):
-        return 0.3
+        return 0.40
 
-    # Tried something
-    return 0.1
+    return 0.10
