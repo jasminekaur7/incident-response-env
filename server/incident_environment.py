@@ -22,7 +22,7 @@ VALID_ACTION_TYPES = {
     "clear_cache", "redeploy",
 }
 
-REWARD_CORRECT      =  1.0
+REWARD_CORRECT      =  0.99
 REWARD_PARTIAL      =  0.3
 REWARD_WRONG        = -0.2
 REWARD_STEP_PENALTY = -0.05
@@ -77,7 +77,7 @@ class IncidentResponseEnvironment(Environment):
             task_name=self._task.name,
             step_number=0,
             done=False,
-            reward=0.0,
+            reward=0.01,
         )
 
     # ── step ───────────────────────────────────────────────────────────────
@@ -118,7 +118,9 @@ class IncidentResponseEnvironment(Environment):
         correct_target = self._task.correct_target
 
         if action.action_type == correct_action and action.target == correct_target:
-            reward          = max(round(REWARD_CORRECT + REWARD_STEP_PENALTY * (step_n - 1), 3), 0.5)
+            reward          = max(round(REWARD_CORRECT + REWARD_STEP_PENALTY * (step_n - 1), 3), 0.01)
+            reward = min(reward,0.99)
+
             done            = True
             incident_status = "resolved"
             feedback        = (
