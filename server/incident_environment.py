@@ -59,9 +59,9 @@ class IncidentResponseEnvironment(Environment):
             correct_action=self._task.correct_action,
             correct_target=self._task.correct_target,
             actions_taken=[],
-            cumulative_reward=0.0,
+            cumulative_reward=0.01,
             max_steps=self._task.max_steps,
-            grader_score=0.0,
+            grader_score=0.01,
         )
 
         return IncidentObservation(
